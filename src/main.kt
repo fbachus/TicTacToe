@@ -5,8 +5,8 @@ var field = Array(9) {_ -> "#"}
 var symbols = arrayOf ("X", "O")
 
 fun main(args: Array<String>) {
+    println("The winner is: " + play())
     printField()
-    print("The winner is: " + play())
 }
 
 fun printField(){
@@ -20,27 +20,27 @@ fun printField(){
 fun play(): String
 {
     var player = 0
-    var bla = 0
+    var index = 0
     for (i in 0..8){
-
+        printField()
+        println("player: " + symbols[player] + "\n")
         do {
             val input = Scanner(System.`in`)
-            bla = fieldcon(input.nextInt())
-        } while (bla < 0 || bla > 8 || field[bla] != "#")
-
-        field[bla] = symbols[player]
+            index = fieldcon(input.nextInt())
+        } while (index < 0 || index > 8 || field[index] != "#")
+        println("Field:  " + index.toString())
+        field[index] = symbols[player]
         player = (player + 1) % 2
-        printField()
-        var checked = check(player, bla)
+        var checked = check(player, index)
         if (checked == "X") return symbols[0]
         else if (checked == "O") return symbols[1]
     }
     return "Noone!"
 }
 
-fun fieldcon(bla:Int): Int
+fun fieldcon(index: Int): Int
 {
-    return when (bla)
+    return when (index)
     {
         1 -> 6
         2 -> 7
@@ -57,8 +57,9 @@ fun fieldcon(bla:Int): Int
 
 fun check(player: Int, index: Int): String
 {
-    if((field[index % 3] == symbols[player] && field[index % 3 + 3] == symbols[player] && field[index % 3 + 6] == symbols[player])) return symbols[player]
-    else if(field[index % 3] == symbols[player] && field[index % 3 + 1] == symbols[player] && field[index % 3 + 2] == symbols[player]) return symbols[player]
-    else if(index % 2 == 0 && ((field[0] == symbols[player] && field[4] == symbols[player] && field[8] == symbols[player]) || (field[2] == symbols[player] && field[4] == symbols[player] && field[6] == symbols[player]))) return symbols[player]
+    if((field[index % 3] == symbols[player] && field[index % 3 + 3] == symbols[player] && field[index % 3 + 6] == symbols[player]) ||
+            (field[index % 3] == symbols[player] && field[index % 3 + 1] == symbols[player] && field[index % 3 + 2] == symbols[player]) ||
+            (index % 2 == 0 && ((field[0] == symbols[player] && field[4] == symbols[player] && field[8] == symbols[player]) ||
+            (field[2] == symbols[player] && field[4] == symbols[player] && field[6] == symbols[player])))) return symbols[player]
     else return "#"
 }
