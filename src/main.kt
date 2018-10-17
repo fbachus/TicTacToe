@@ -1,12 +1,15 @@
 import java.util.*
 
+
+var field = Array(9) {_ -> "#"}
+var symbols = arrayOf ("X", "O")
+
 fun main(args: Array<String>) {
-    var field = Array<String>(9) {_ -> "#"}
-    play(field)
-    printField(field)
+    printField()
+    print("The winner is: " + play())
 }
 
-fun printField(field: Array<String>){
+fun printField(){
     for (i in 0..8)
     {
         print(field[i])
@@ -14,10 +17,9 @@ fun printField(field: Array<String>){
     }
 }
 
-fun play(field: Array<String>)
+fun play(): String
 {
-    var curSindex = 0
-    var symbols = arrayOf ("X", "O")
+    var player = 0
     var bla = 0
     for (i in 0..8){
 
@@ -26,13 +28,14 @@ fun play(field: Array<String>)
             bla = fieldcon(input.nextInt())
         } while (bla < 0 || bla > 8 || field[bla] != "#")
 
-
-        field[bla] = symbols[curSindex]
-        curSindex = (curSindex + 1) % 2
-        printField(field)
-        if (check(field) == "X" || check(field) == "O")
-            return check(field)
+        field[bla] = symbols[player]
+        player = (player + 1) % 2
+        printField()
+        var checked = check(player, bla)
+        if (checked == "X") return symbols[0]
+        else if (checked == "O") return symbols[1]
     }
+    return "Noone!"
 }
 
 fun fieldcon(bla:Int): Int
@@ -52,7 +55,10 @@ fun fieldcon(bla:Int): Int
     }
 }
 
-fun check(field: Array<Int>): String
+fun check(player: Int, index: Int): String
 {
-    
+    if((field[index % 3] == symbols[player] && field[index % 3 + 3] == symbols[player] && field[index % 3 + 6] == symbols[player])) return symbols[player]
+    else if(field[index % 3] == symbols[player] && field[index % 3 + 1] == symbols[player] && field[index % 3 + 2] == symbols[player]) return symbols[player]
+    else if(index % 2 == 0 && ((field[0] == symbols[player] && field[4] == symbols[player] && field[8] == symbols[player]) || (field[2] == symbols[player] && field[4] == symbols[player] && field[6] == symbols[player]))) return symbols[player]
+    else return "#"
 }
