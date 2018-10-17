@@ -32,8 +32,7 @@ fun play(): String
         field[index] = symbols[player]
         player = (player + 1) % 2
         var checked = check(player, index)
-        if (checked == "X") return symbols[0]
-        else if (checked == "O") return symbols[1]
+        if (checked == "X" || checked == "O") return checked
     }
     return "Noone!"
 }
