@@ -56,7 +56,7 @@ fun fieldcon(index: Int): Int
 
 fun check(player: Int, index: Int): String
 {
-    if((field[index % 3] == symbols[player] && field[index % 3 + 3] == symbols[player] && field[index % 3 + 6] == symbols[player]) ||
+    if ((field[index % 3] == symbols[player] && field[index % 3 + 3] == symbols[player] && field[index % 3 + 6] == symbols[player]) ||
             (field[index % 3] == symbols[player] && field[index % 3 + 1] == symbols[player] && field[index % 3 + 2] == symbols[player]) ||
             (index % 2 == 0 && ((field[0] == symbols[player] && field[4] == symbols[player] && field[8] == symbols[player]) ||
             (field[2] == symbols[player] && field[4] == symbols[player] && field[6] == symbols[player])))) return symbols[player]
