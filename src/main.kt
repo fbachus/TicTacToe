@@ -30,9 +30,9 @@ fun play(): String
         } while (index < 0 || index > 8 || field[index] != "#")
         println("Field:  " + index.toString())
         field[index] = symbols[player]
-        player = (player + 1) % 2
         var checked = check(player, index)
         if (checked == "X" || checked == "O") return checked
+        player = (player + 1) % 2
     }
     return "Noone!"
 }
