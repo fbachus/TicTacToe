@@ -15,10 +15,12 @@ fun main(args: Array<String>)
     // print the field to ensure it's correctly created
     printField(field)
 
-
+    // Start the game and print the winner
     //println("The winner is: " + play())
 }
 
+// Pretty-Printing the field
+//TODO: Implement actual interactive interface
 fun printField(field: Array<Array<String?>>)
 {
     for (i in 0..((fieldSize + 1) * 3 + fieldSize - 2))
@@ -59,13 +61,15 @@ fun getInt(msg: String): Int?
     return readLine()?.toInt()
 }
 
+//Method to start a new "play" instance
 fun play(): String
 {
     var player = 0
     var x: Int
     var y: Int
 
-    
+    //for ()
+
     return "Noone!"
 }
 
