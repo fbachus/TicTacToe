@@ -21,7 +21,7 @@ fun main(args: Array<String>)
     do
     {
         // Get number of players (limitted by symbols avaible)
-        players = getInt("Number of players: ", 1..MAX_PLAYERS, 2, true)
+        players = getInt("Number of players: ", 2..MAX_PLAYERS, 2, true)
 
         // Get valid field size + create field (2D-String-Array)
         fieldSize = getInt("Input Field Size: ", MIN_RANGE..MAX_RANGE, DEFAULT_SIZE, true)
@@ -115,7 +115,8 @@ fun play(field: Array<Array<String?>>): String
     {
         // Setup Phase: Print map and current player
         printField(field)
-        println("Player " + (player + 1) + " (" + SYMBOLS[player] + ")")
+        println("Player " + (SYMBOLS[player]) + " (" + (player + 1) + "/" + players + ")")
+        println(player % players)
 
         do
         {
@@ -129,7 +130,7 @@ fun play(field: Array<Array<String?>>): String
         if (check(field, player, x, y)) return SYMBOLS[player]
 
         // End Phase: Changing player
-        player = (player % players) + 1
+        player = (player + 1) % players
     }
     return "Noone!"
 }
