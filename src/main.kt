@@ -107,7 +107,7 @@ fun isYes(answer: String?): Boolean
 //Method to start a new "play" instance
 fun play(field: Array<Array<String?>>): String
 {
-    var player = 0
+    var player = 0      // from 0 to players - 1
     var x: Int
     var y: Int
 
@@ -115,18 +115,18 @@ fun play(field: Array<Array<String?>>): String
     {
         // Setup Phase: Print map and current player
         printField(field)
-        println("Player " + (player + 1))
+        println("Player " + (player + 1) + " (" + SYMBOLS[player] + ")")
 
         do
         {
             // Playing Phase: Getting coordinates of field
-            x = getInt("Row:    ", MIN_RANGE..MAX_RANGE) - 1
-            y = getInt("Column: ", MIN_RANGE..MAX_RANGE) - 1
+            x = getInt("Row:    ", 1..(fieldSize)) - 1
+            y = getInt("Column: ", 1..(fieldSize)) - 1
         } while (!(field[x][y].equals(DEF_CHAR)))
 
         // Playing Phase: Update map and check for wins
         field[x][y] = SYMBOLS[player]
-        if (check(field, SYMBOLS[player], x, y)) return SYMBOLS[player]
+        if (check(field, player, x, y)) return SYMBOLS[player]
 
         // End Phase: Changing player
         player = (player % players) + 1
@@ -135,23 +135,20 @@ fun play(field: Array<Array<String?>>): String
 }
 
 // Checks for a win; X/O if successful, # otherwise
-fun check(field: Array<Array<String?>>, player: String, x: Int, y: Int): Boolean
+fun check(field: Array<Array<String?>>, player: Int, x: Int, y: Int): Boolean
 {
     // Starting recursive search:
     return (checkCardinal(field, player, x, y) || checkDiagonal(field, player, x, y))
 }
 
-fun checkCardinal(field: Array<Array<String?>>, player: String, x: Int, y: Int): Boolean
+fun checkCardinal(field: Array<Array<String?>>, player: Int, x: Int, y: Int): Boolean
 {
     // Check both cardinal directions:
-    for (ran in 0..1) {
-        if (fieldExtension(field, player, x, y, ran, ran - 1) &&                        // checks directions [-1;0] to [1;0]
-                fieldExtension(field, player, x, y, -(ran), -(ran - 1))) return true        // and [0;-1] to [0;1]
-    }
-    return false
+    return (((fieldExtension(field, player, x, y, -1, 0)) && (fieldExtension(field, player, x, y, 1, 0))) ||    // Vertical
+            ((fieldExtension(field, player, x, y, 0, -1)) && (fieldExtension(field, player, x, y, 0, 1))))      // Horizontal
 }
 
-fun checkDiagonal(field: Array<Array<String?>>, player: String, x: Int, y: Int): Boolean
+fun checkDiagonal(field: Array<Array<String?>>, player: Int, x: Int, y: Int): Boolean
 {
     // check diagonal directions if on middle diagonal:
     if (fieldSize % 2 == 1)
@@ -167,11 +164,11 @@ fun checkDiagonal(field: Array<Array<String?>>, player: String, x: Int, y: Int):
 }
 
 // Checks recursively every lane from the x-y-coordinate
-fun fieldExtension(field: Array<Array<String?>>, player: String, x: Int, y: Int, dx: Int, dy: Int): Boolean
+fun fieldExtension(field: Array<Array<String?>>, player: Int, x: Int, y: Int, dx: Int, dy: Int): Boolean
 {
-    if ((x in 0 until fieldSize - 1) && (y in 0 until fieldSize - 1))
+    if ((x in 0..(fieldSize - 1)) && (y in 0..(fieldSize - 1)))
     {
-        if (player != field[x][y]) return false
+        if (SYMBOLS[player].equals(field[x][y])) return false
         else return fieldExtension(field, player,x + dx, y + dy, dx, dy)
     }
     else return true

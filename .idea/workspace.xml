@@ -21,8 +21,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="470">
-              <caret line="159" column="73" selection-start-line="159" selection-start-column="73" selection-end-line="159" selection-end-column="73" />
+            <state relative-caret-position="-298">
+              <caret line="117" column="72" lean-forward="true" selection-start-line="117" selection-start-column="72" selection-end-line="117" selection-end-column="72" />
             </state>
           </provider>
         </entry>
@@ -180,7 +180,7 @@
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49947917" visible="true" weight="0.19450317" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49947917" visible="true" weight="0.18181819" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -210,8 +210,8 @@
     <entry file="file://$PROJECT_DIR$/src/turns.kt" />
     <entry file="file://$PROJECT_DIR$/src/main.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="470">
-          <caret line="159" column="73" selection-start-line="159" selection-start-column="73" selection-end-line="159" selection-end-column="73" />
+        <state relative-caret-position="-298">
+          <caret line="117" column="72" lean-forward="true" selection-start-line="117" selection-start-column="72" selection-end-line="117" selection-end-column="72" />
         </state>
       </provider>
     </entry>
