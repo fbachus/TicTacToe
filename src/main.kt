@@ -1,17 +1,18 @@
 import java.lang.Math.*
 
-const val MIN_RANGE = 1     // Must stay positive; limitting size of game with 1 being the smallest
-const val MAX_RANGE = 9     // Maximum field size; up to 32767 (though not recommended)
-const val DEFAULT_SIZE = 3  // Default Value
+const val MIN_RANGE = 1                             // Must stay positive; minimum selectable field size with 1 being the smallest
+const val MAX_RANGE = 9                             // Maximum field size; up to 32767 (though not recommended)
+const val DEFAULT_SIZE = 3                          // Default Value
 
 //TODO: let players input their symbol
-const val SYMBOLS =         // Symbols for each player
+val SYMBOLS =                                 // Symbols for each player
         arrayOf ("X", "O", "A", "Z", "@", "#")
-const val MAX_PLAYERS = SYMBOLS.
+val MAX_PLAYERS = SYMBOLS.size
 
-const val DEF_CHAR = " "     // Default Symbol; printed for not yet used fields; cosmetic purpose only
+const val DEF_CHAR = " "                            // Default Symbol; printed for not yet used fields; cosmetic purpose only
 
 var fieldSize = DEFAULT_SIZE
+var players = MAX_PLAYERS
 
 fun main(args: Array<String>)
 {
@@ -19,6 +20,9 @@ fun main(args: Array<String>)
 
     do
     {
+        // Get number of players (limitted by symbols avaible)
+        players = getInt("Number of players: ", 1..MAX_PLAYERS, 2, true)
+
         // Get valid field size + create field (2D-String-Array)
         fieldSize = getInt("Input Field Size: ", MIN_RANGE..MAX_RANGE, DEFAULT_SIZE, true)
 
@@ -76,7 +80,6 @@ fun getInt(msg: String, range: IntRange, default: Int, canBeNull: Boolean): Int
     } while (!(tmp in range))
     if (tmp == null) return default
     return tmp
-
 }
 
 // Method overloading to forbid null integer
@@ -122,11 +125,11 @@ fun play(field: Array<Array<String?>>): String
         } while (!(field[x][y].equals(DEF_CHAR)))
 
         // Playing Phase: Update map and check for wins
-        field[x][y] = symbols[player]
-        if (check(field, symbols[player], x, y)) return symbols[player]
+        field[x][y] = SYMBOLS[player]
+        if (check(field, SYMBOLS[player], x, y)) return SYMBOLS[player]
 
         // End Phase: Changing player
-        player = (player % MAX_PLAYERS) + 1
+        player = (player % players) + 1
     }
     return "Noone!"
 }
@@ -135,12 +138,22 @@ fun play(field: Array<Array<String?>>): String
 fun check(field: Array<Array<String?>>, player: String, x: Int, y: Int): Boolean
 {
     // Starting recursive search:
-    // Both kardinal directions:
+    return (checkCardinal(field, player, x, y) || checkDiagonal(field, player, x, y))
+}
+
+fun checkCardinal(field: Array<Array<String?>>, player: String, x: Int, y: Int): Boolean
+{
+    // Check both cardinal directions:
     for (ran in 0..1) {
-        if (fieldExtension(field, player, x, y, ran, ran - 1) &&
-                fieldExtension(field, player, x, y, -(ran), -(ran - 1))) return true
+        if (fieldExtension(field, player, x, y, ran, ran - 1) &&                        // checks directions [-1;0] to [1;0]
+                fieldExtension(field, player, x, y, -(ran), -(ran - 1))) return true        // and [0;-1] to [0;1]
     }
-    // Diagonal directions:
+    return false
+}
+
+fun checkDiagonal(field: Array<Array<String?>>, player: String, x: Int, y: Int): Boolean
+{
+    // check diagonal directions if on middle diagonal:
     if (fieldSize % 2 == 1)
     {
         // Upper left to lower right
