@@ -111,7 +111,7 @@ fun play(field: Array<Array<String?>>): String
     var x: Int
     var y: Int
 
-    for (turn in 0..pow(fieldSize.toDouble(), 2.0).toInt())
+    for (turn in 1..pow(fieldSize.toDouble(), 2.0).toInt())
     {
         // Setup Phase: Print map and current player
         printField(field)
@@ -144,13 +144,17 @@ fun check(field: Array<Array<String?>>, player: Int, x: Int, y: Int): Boolean
 
 fun checkCardinal(field: Array<Array<String?>>, player: Int, x: Int, y: Int): Boolean
 {
+    println("CARDINAL")  //DEBUGGING
+
     // Check both cardinal directions:
-    return (((fieldExtension(field, player, x, y, -1, 0)) && (fieldExtension(field, player, x, y, 1, 0))) ||    // Vertical
-            ((fieldExtension(field, player, x, y, 0, -1)) && (fieldExtension(field, player, x, y, 0, 1))))      // Horizontal
+    return ((fieldExtension(field, player, x, y, -1, 0) && fieldExtension(field, player, x, y, 1, 0)) ||    // Vertical
+            (fieldExtension(field, player, x, y, 0, -1) && fieldExtension(field, player, x, y, 0, 1)))      // Horizontal
 }
 
 fun checkDiagonal(field: Array<Array<String?>>, player: Int, x: Int, y: Int): Boolean
 {
+    println("DIAGONAL")  //DEBUGGING
+
     // check diagonal directions if on middle diagonal:
     if (fieldSize % 2 == 1)
     {
@@ -167,12 +171,15 @@ fun checkDiagonal(field: Array<Array<String?>>, player: Int, x: Int, y: Int): Bo
 // Checks recursively every lane from the x-y-coordinate
 fun fieldExtension(field: Array<Array<String?>>, player: Int, x: Int, y: Int, dx: Int, dy: Int): Boolean
 {
+    println("pl: " + (player + 1) + ", x: " + (x + 1) + ", y: " + (y + 1) + ", dx/dy: " + dx + " / " + dy)  //DEBUGGING
+
     if ((x in 0..(fieldSize - 1)) && (y in 0..(fieldSize - 1)))
     {
         if (SYMBOLS[player].equals(field[x][y])) return false
         else return fieldExtension(field, player,x + dx, y + dy, dx, dy)
     }
-    else return true
+    println("Ext true")
+    return true
 }
 
 // Function to create a 2D Array (copied from StackOverflow and removed redundant modifiers)
