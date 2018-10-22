@@ -1,23 +1,39 @@
 import java.lang.Math.*
 
 const val MIN_RANGE = 1     // Must stay positive; limitting size of game with 1 being the smallest
-const val MAX_RANGE = 20    // Maximum field size; up to 32767 (though not recommended)
+const val MAX_RANGE = 9     // Maximum field size; up to 32767 (though not recommended)
+const val DEFAULT_SIZE = 3  // Default Value
 
-var fieldSize: Int
+//TODO: let players input their symbol
+const val SYMBOLS =         // Symbols for each player
+        arrayOf ("X", "O", "A", "Z", "@", "#")
+const val MAX_PLAYERS = SYMBOLS.
+
+const val DEF_CHAR = " "     // Default Symbol; printed for not yet used fields; cosmetic purpose only
+
+var fieldSize = DEFAULT_SIZE
 
 fun main(args: Array<String>)
 {
-    // Get valid field size + create field (2D-String-Array)
-    var fieldSize = getInt("Input Field Size: ", MIN_RANGE..MAX_RANGE)!!
-    val field = array2d<String?>(fieldSize, fieldSize) { "#" }
 
-    // Start the game and print the winner
-    println("The winner is: " + play(field))
+
+    do
+    {
+        // Get valid field size + create field (2D-String-Array)
+        fieldSize = getInt("Input Field Size: ", MIN_RANGE..MAX_RANGE, DEFAULT_SIZE, true)
+
+        // Create empty field
+        val field = array2d<String?>(fieldSize, fieldSize) { DEF_CHAR }
+
+        // Start the game and print the winner
+        println("The winner is: " + play(field))
+        printField(field)
+    } while (isYes(getString("Play again? (y/N) ")))
 }
 
 // Pretty-Printing the field
 // TODO: Implement actual interactive interface
-// TODO: Changing 'if' construct to 'when' construct for aesthetic reasons
+// TODO: Fix off-errors by field coordinates greater than 10
 fun printField(field: Array<Array<String?>>)
 {
     for (i in 0..(fieldSize * 2))
@@ -26,9 +42,12 @@ fun printField(field: Array<Array<String?>>)
         {
             if (i == 0)
             {
-                if (j % 4 == 0) print(ceil((j / 4).toDouble()).toInt())
-                else if (j % 4 == 2) print("|")
-                else print(" ")
+                when (j%4)
+                {
+                    0 -> print(ceil((j / 4).toDouble()).toInt())
+                    2 -> print("|")
+                    else -> print(" ")
+                }
             }
             else if (i % 2 == 1) print("-")
             else
@@ -46,21 +65,45 @@ fun printField(field: Array<Array<String?>>)
     }
 }
 
-// TODO: Fix input validation; >> currently not working
-fun getInt(msg: String, range: IntRange): Int?
+// Returns an integer: the input if valid, default otherwise
+fun getInt(msg: String, range: IntRange, default: Int, canBeNull: Boolean): Int
 {
-    var tmp: Int
-    print(msg)
+    if (!canBeNull) return getInt(msg, range)
+    var tmp: Int?
     do {
-        tmp = readLine()?.toInt()!!
+        print(msg)
+        tmp = readLine()?.toIntOrNull()
     } while (!(tmp in range))
+    if (tmp == null) return default
     return tmp
+
+}
+
+// Method overloading to forbid null integer
+fun getInt(msg: String, range: IntRange): Int
+{
+    var tmp: Int?
+    do {
+        print(msg)
+        tmp = readLine()?.toIntOrNull()
+    } while (!(tmp in range) || tmp == null)
+    return tmp
+}
+
+fun getString(msg: String): String?
+{
+    print(msg)
+    return readLine()
+}
+
+fun isYes(answer: String?): Boolean
+{
+    return (answer.equals("yes", true) || answer.equals("y", true))
 }
 
 //Method to start a new "play" instance
 fun play(field: Array<Array<String?>>): String
 {
-    var symbols = arrayOf ("X", "O")
     var player = 0
     var x: Int
     var y: Int
@@ -71,16 +114,19 @@ fun play(field: Array<Array<String?>>): String
         printField(field)
         println("Player " + (player + 1))
 
-        // Playing Phase: Getting coordinates of field
-        x = getInt("Row:    ", MIN_RANGE..MAX_RANGE)!!
-        y = getInt("Column: ", MIN_RANGE..MAX_RANGE)!!
+        do
+        {
+            // Playing Phase: Getting coordinates of field
+            x = getInt("Row:    ", MIN_RANGE..MAX_RANGE) - 1
+            y = getInt("Column: ", MIN_RANGE..MAX_RANGE) - 1
+        } while (!(field[x][y].equals(DEF_CHAR)))
 
         // Playing Phase: Update map and check for wins
         field[x][y] = symbols[player]
         if (check(field, symbols[player], x, y)) return symbols[player]
 
         // End Phase: Changing player
-        player = player % 2 + 1
+        player = (player % MAX_PLAYERS) + 1
     }
     return "Noone!"
 }
@@ -88,13 +134,22 @@ fun play(field: Array<Array<String?>>): String
 // Checks for a win; X/O if successful, # otherwise
 fun check(field: Array<Array<String?>>, player: String, x: Int, y: Int): Boolean
 {
-    // Starting recursive search; in either kardinal direction, and, if on the middle diagonal line, in those
-    if (fieldExtension(field,  player, x, y, ran, ran - 1) &&
-            fieldExtension(field,  player, x, y, -ran, -ran + 1)) return true
-    if ((fieldSize % 2 == 1) && abs(x) == abs(y)) return ((fieldExtension(field,  player, x, y, 1, 1) &&
-                                                            fieldExtension(field,  player, x, y, -1, -1)) ||
-                                                            (fieldExtension(field,  player, x, y, 1, -1) &&
-                                                            fieldExtension(field,  player, x, y, -1, 1)))
+    // Starting recursive search:
+    // Both kardinal directions:
+    for (ran in 0..1) {
+        if (fieldExtension(field, player, x, y, ran, ran - 1) &&
+                fieldExtension(field, player, x, y, -(ran), -(ran - 1))) return true
+    }
+    // Diagonal directions:
+    if (fieldSize % 2 == 1)
+    {
+        // Upper left to lower right
+        if (x == y) return (fieldExtension(field,  player, x, y, 1, 1) &&
+                fieldExtension(field,  player, x, y, -1, -1))
+        // Upper right to lower left
+        if (x + y == fieldSize - 1) return (fieldExtension(field,  player, x, y, 1, -1) &&
+                fieldExtension(field,  player, x, y, -1, 1))
+    }
     return false
 }
 
