@@ -14,6 +14,8 @@ const val DEF_CHAR = " "                            // Default Symbol; printed f
 var fieldSize = DEFAULT_SIZE
 var players = MAX_PLAYERS
 
+var DEFAULT_RESTART_OPTION = true
+
 fun main(args: Array<String>)
 {
 
@@ -32,7 +34,7 @@ fun main(args: Array<String>)
         // Start the game and print the winner
         println("The winner is: " + play(field))
         printField(field)
-    } while (isYes(getString("Play again? (y/N) ")))
+    } while (getYesNo("Play again? (" + getYesNo(DEFAULT_RESTART_OPTION) + ") ", DEFAULT_RESTART_OPTION))
 }
 
 // Pretty-Printing the field
@@ -99,9 +101,28 @@ fun getString(msg: String): String?
     return readLine()
 }
 
+// Asks for Yes/No input (yes, Yes, y, Y for True; no, No, n, N for False)
+fun getYesNo(msg: String, default: Boolean): Boolean
+{
+    var tmp: String?
+    do {
+        print(msg)
+        tmp = readLine()
+        if (tmp.equals(null)) return default
+    } while (!(isYes(tmp) || isNo(tmp)))
+    return isYes(tmp)
+}
+
+fun getYesNo(bool: Boolean):
+
 fun isYes(answer: String?): Boolean
 {
     return (answer.equals("yes", true) || answer.equals("y", true))
+}
+
+fun isNo(answer: String?): Boolean
+{
+    return (answer.equals("no", true) || answer.equals("n", true))
 }
 
 //Method to start a new "play" instance
@@ -116,7 +137,6 @@ fun play(field: Array<Array<String?>>): String
         // Setup Phase: Print map and current player
         printField(field)
         println("Player " + (SYMBOLS[player]) + " (" + (player + 1) + "/" + players + ")")
-        println(player % players)
 
         do
         {
@@ -144,8 +164,6 @@ fun check(field: Array<Array<String?>>, player: Int, x: Int, y: Int): Boolean
 
 fun checkCardinal(field: Array<Array<String?>>, player: Int, x: Int, y: Int): Boolean
 {
-    println("CARDINAL")  //DEBUGGING
-
     // Check both cardinal directions:
     return ((fieldExtension(field, player, x, y, -1, 0) && fieldExtension(field, player, x, y, 1, 0)) ||    // Vertical
             (fieldExtension(field, player, x, y, 0, -1) && fieldExtension(field, player, x, y, 0, 1)))      // Horizontal
@@ -153,8 +171,6 @@ fun checkCardinal(field: Array<Array<String?>>, player: Int, x: Int, y: Int): Bo
 
 fun checkDiagonal(field: Array<Array<String?>>, player: Int, x: Int, y: Int): Boolean
 {
-    println("DIAGONAL")  //DEBUGGING
-
     // check diagonal directions if on middle diagonal:
     if (fieldSize % 2 == 1)
     {
@@ -171,14 +187,11 @@ fun checkDiagonal(field: Array<Array<String?>>, player: Int, x: Int, y: Int): Bo
 // Checks recursively every lane from the x-y-coordinate
 fun fieldExtension(field: Array<Array<String?>>, player: Int, x: Int, y: Int, dx: Int, dy: Int): Boolean
 {
-    println("pl: " + (player + 1) + ", x: " + (x + 1) + ", y: " + (y + 1) + ", dx/dy: " + dx + " / " + dy)  //DEBUGGING
-
     if ((x in 0..(fieldSize - 1)) && (y in 0..(fieldSize - 1)))
     {
-        if (SYMBOLS[player].equals(field[x][y])) return false
+        if (!(SYMBOLS[player].equals(field[x][y]))) return false
         else return fieldExtension(field, player,x + dx, y + dy, dx, dy)
     }
-    println("Ext true")
     return true
 }
 
